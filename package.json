@@ -1,0 +1,29 @@
+{
+  "name": "matibotfb",
+  "version": "1.0.0",
+  "description": "Bot de Facebook",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matiassalinas/matibotfb.git"
+  },
+  "keywords": [
+    "bot",
+    "messenger",
+    "facebook"
+  ],
+  "author": "matiassalinas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matiassalinas/matibotfb/issues"
+  },
+  "homepage": "https://github.com/matiassalinas/matibotfb#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "request": "^2.81.0"
+  }
+}
