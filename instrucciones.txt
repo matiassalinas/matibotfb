@@ -1,0 +1,8 @@
+Cómo subir el webserver
+
+Tener dos terminales:
+
+1. > node app/index.js
+2. > ./ngrok http 3000
+
+Luego, actualizar el webhook de facebook (https://developers.facebook.com) con el enlace entregado por ngrok.
