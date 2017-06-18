@@ -50,29 +50,55 @@ app.post('/webhook', function(req,res){
 
 /*
 * Se evalua el mensaje recibido, y se envía una respuesta.
+* Se utiliza una function callback ya que algunas respuestas se generan en base a alguna api externa.
 */
 function receiveMessage(event){
     var sender = event.sender.id;
     var msg = event.message.text;
-    var newMsg = evaluateMessage(msg);
+    evaluateMessage(msg, function(newMsg){
+        sendMessage(sender, newMsg);
+    });
     
-    sendMessage(sender, newMsg);
+    
 }
 
 /*
 * Evaluamos el mensaje recibido del usuario, y generamos las respuestas correspondientes
 */
-function evaluateMessage(message){
+function evaluateMessage(message, callback){
     var newMessage = new Object();
     if(contain(message, 'hola')){
         newMessage.text = 'Hola, ¿Cómo estas?';
+        callback(newMessage);
     } else if(contain(message, 'imagen') && contain(message, 'random')){
         newMessage.url = 'http://lorempixel.com/400/200/';
         newMessage.text = 'Aquí tienes una imagen random';
+        callback(newMessage);
+    } else if(contain(message, 'euro')){
+        euroPeso(function(result){
+            newMessage.text = "El valor actual del euro es de $" + result + " pesos chilenos";
+            callback(newMessage);
+        })
     } else{
         newMessage.text = 'No entiendo lo que dices.';
+        callback(newMessage);
     }
-    return newMessage;
+}
+
+/*
+* Ejemplo de uso de API Externa.
+* El resultado es el valor del euro en pesos chilenos.
+*/
+function euroPeso(callback){
+    request('http://mindicador.cl/api',
+        function(error, res, data){
+            if(error) console.log('Error en euroPeso API');
+            else{
+                var response = JSON.parse(data);
+                callback(response.euro.valor);
+            }
+        }
+    );
 }
 
 /*
