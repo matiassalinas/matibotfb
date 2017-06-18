@@ -112,5 +112,7 @@ function callSendAPI(messageData){
 * Revisamos si la sentencia (mensaje del usuario) contiene la palabra clave. 
 */
 function contain(sentence, word){
+    sentence = sentence.toUpperCase();
+    word = word.toUpperCase();
     return sentence.indexOf(word) >= 0;
 }
