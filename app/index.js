@@ -35,7 +35,6 @@ app.get('/webhook', function(req,res){
 */
 app.post('/webhook', function(req,res){
     var data = req.body;
-    //console.log(data);
     if(data.object == 'page'){
         data.entry.forEach(function(pageEntry){
             pageEntry.messaging.forEach(function(messagingEvent){
@@ -53,40 +52,63 @@ app.post('/webhook', function(req,res){
 * Se evalua el mensaje recibido, y se envía una respuesta.
 */
 function receiveMessage(event){
-    //console.log(event);
     var sender = event.sender.id;
     var msg = event.message.text;
-    //console.log(sender + " ha enviado: " + msg);
     var newMsg = evaluateMessage(msg);
     
     sendMessage(sender, newMsg);
-    
 }
 
 /*
 * Evaluamos el mensaje recibido del usuario, y generamos las respuestas correspondientes
 */
 function evaluateMessage(message){
-    var newMessage = '';
+    var newMessage = new Object();
     if(contain(message, 'hola')){
-        newMessage = 'Hola, ¿Cómo estas?';
-    }else{
-        newMessage = 'No entiendo lo que dices.';
+        newMessage.text = 'Hola, ¿Cómo estas?';
+    } else if(contain(message, 'imagen') && contain(message, 'random')){
+        newMessage.url = 'http://lorempixel.com/400/200/';
+        newMessage.text = 'Aquí tienes una imagen random';
+    } else{
+        newMessage.text = 'No entiendo lo que dices.';
     }
     return newMessage;
 }
 
 /*
+* Se revisa si el mensaje tiene texto y/o url de una imagen para mostrar. 
+*/
+function sendMessage(sender, newMessage){
+    var message = new Object();
+    if(newMessage.text != null){
+        message = {
+            text : newMessage.text
+        };
+        sendData(sender, message);
+    }
+    if(newMessage.url != null){
+        message = {
+           attachment : {
+               type : 'image',
+               payload: {
+                  url: newMessage.url
+               }
+           }
+        };
+        sendData(sender, message);
+    }
+    
+}
+
+/*
 * Se genera la estructura del mensaje que requiere la API de Facebook para enviar mensajes.
 */
-function sendMessage(sender, message){
+function sendData(sender, message){
     var data = {
         recipient: {
             id : sender
         },
-        message: {
-            text : message
-        }
+        message
     };
     callSendAPI(data);
 }
