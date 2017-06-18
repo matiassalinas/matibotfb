@@ -56,7 +56,9 @@ function receiveMessage(event){
     var sender = event.sender.id;
     var msg = event.message.text;
     evaluateMessage(msg, function(newMsg){
-        sendMessage(sender, newMsg);
+        if(Object.keys(newMsg).length > 0 ) {
+            sendMessage(sender, newMsg);
+        }
     });
     
     
@@ -69,20 +71,31 @@ function evaluateMessage(message, callback){
     var newMessage = new Object();
     if(contain(message, 'hola')){
         newMessage.text = 'Hola, ¿Cómo estas?';
-        callback(newMessage);
     } else if(contain(message, 'imagen') && contain(message, 'random')){
         newMessage.url = 'http://lorempixel.com/400/200/';
         newMessage.text = 'Aquí tienes una imagen random';
-        callback(newMessage);
     } else if(contain(message, 'euro')){
         euroPeso(function(result){
             newMessage.text = "El valor actual del euro es de $" + result + " pesos chilenos";
             callback(newMessage);
         })
+    } else if(contain(message, 'info')){
+        var buttons = [{
+                type : "web_url",
+                url : "https://github.com/matiassalinas",
+                title : "GitHub"
+            }];
+        newMessage.template = {
+                title : "Matías Salinas Soto",
+                subtitle : "Estudiante de Ingeniería Civil en Informática",
+                item_url : "https://github.com/matiassalinas",
+                image_url : "https://avatars0.githubusercontent.com/u/18743633?v=3&s=460",
+                buttons : buttons
+            };
     } else{
         newMessage.text = 'No entiendo lo que dices.';
-        callback(newMessage);
     }
+    callback(newMessage);
 }
 
 /*
@@ -102,7 +115,7 @@ function euroPeso(callback){
 }
 
 /*
-* Se revisa si el mensaje tiene texto y/o url de una imagen para mostrar. 
+* Se revisa si el mensaje tiene texto, url de una imagen y/o template para mostrar. 
 */
 function sendMessage(sender, newMessage){
     var message = new Object();
@@ -123,7 +136,18 @@ function sendMessage(sender, newMessage){
         };
         sendData(sender, message);
     }
-    
+    if(newMessage.template != null){
+        message = {
+           attachment : {
+               type : 'template',
+               payload : {
+                    template_type : 'generic',
+                    elements : [newMessage.template]
+               }
+           }
+        };
+        sendData(sender, message);
+    }
 }
 
 /*
