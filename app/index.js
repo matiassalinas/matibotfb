@@ -5,6 +5,9 @@ var request = require('request');
 //Temporal (poca seguridad tenerlo asi)
 const APP_TOKEN = 'EAAZAdHjxuffgBADG0IGMaqAam47cc9n1jYPlcH3kC6MTEGFJmBZCBot7oYFXVJmyYoCLwfM4D4sC98WzJYWw7gwgAEQyK7v2SmYBqmrR26Nje7c2WK53nOwZBMbJ6ZBrCtu24RAe9sJ9BN577iH0ydvO3ZB9KiP0v00ZAZCZCdJOTgZDZD';
 
+//token propio de nuestro bot
+const BOT_TOKEN = 'matibot_token';
+
 //URI FACEBOOK API
 const FACEBOOK_URI_API = 'https://graph.facebook.com/v2.6/me/messages';
 var app = express();
@@ -23,7 +26,7 @@ app.get('/', function(req,res){
 * Webhook de facebook, valida el acceso al servidor con el token y el challenge
 */
 app.get('/webhook', function(req,res){
-    if(req.query['hub.verify_token'] === 'matibot_token'){
+    if(req.query['hub.verify_token'] === BOT_TOKEN){
         res.send(req.query['hub.challenge'])
     }else {
         res.send('Acceso inválido.');
